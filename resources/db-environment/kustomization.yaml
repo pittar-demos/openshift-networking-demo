@@ -1,0 +1,12 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: networkdemo-database
+
+resources:
+  - namespace.yaml
+  - petclinicdb-deploymentconfig.yaml
+  - petclinicdb-pvc.yaml
+  - petclinicdb-secret.yaml
+  - petclinicdb-svc.yaml
+  - network-policy-allow-from-same-namespace.yaml

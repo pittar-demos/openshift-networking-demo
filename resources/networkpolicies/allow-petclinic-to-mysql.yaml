@@ -1,0 +1,17 @@
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-petclinic-to-mysql
+  namespace: networkdemo-database
+spec:
+  podSelector:
+    matchLabels:
+      name: petclinicdb
+  ingress:
+    - from:
+        - namespaceSelector:
+            matchLabels:
+              app: petclinic
+      ports:
+        - protocol: TCP
+          port: 3306
