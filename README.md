@@ -21,7 +21,7 @@ This will create the initial infrastructure.
 
 If you look at the Pet Clinic *Deployment* you will see it is attempting to connect to the database at: `petclinicdb.networkdemo-database.svc.cluster.local` 
 
-This is using the internal cluster SDN.  This is an internal DNS address that is derived as follows:
+This is using the internal cluster SDN, so the traffic between the Pet Clinic appliation and the MySQL database will never leave the cluster.  This is an internal DNS address that is derived as follows:
 
 `<service name>.<namespace>.svc.cluster.local`
 
@@ -31,7 +31,7 @@ The application will fail to start because it can't reach the database due to th
 
 ## Examining the Pet Clinic and Databases NetworkPolicy
 
-Both of these projects (*networkpolicy-petclinic* and *networkpolicy-database*) have the same default `NetworkPolicy` applied.  This allows traffic between pods in the same namespace, but denies traffic from other namespaces and the router:
+Both of these projects (*networkdemo-petclinic* and *networkdemo-database*) have the same default `NetworkPolicy` applied.  This allows traffic between pods in the same namespace, but denies traffic from other namespaces and the router:
 
 ```
 apiVersion: networking.k8s.io/v1
@@ -50,12 +50,14 @@ This has the following effect on the projects:
 * No ingress (even from the router) is allowed to applications in these projects.
 * The Pet Clinic application will not be allowed to communicate with the MySQL database, since the *networkdemo-database* namespace is denying all incoming traffic.
 
+You can read more about NetworkPolicy in the [OpenShift documentation](https://docs.openshift.com/container-platform/4.7/networking/network_policy/about-network-policy.html).
+
 ## Fixing the Database Connection
 
 First, let's fix the database connection.
 
 `NetworkPolicy` objects are additive, so there is no reason to remove or edit the existing *deny all* policy.  Instead, we will add another `NetworkPolicy` object that will allow the minimum amount of traffic required.  In this case, the only traffice we want into this project is:
-* Only allow access from the *networkdemo-petclinic* project, and
+* Only allow access from the *networkdemo-petclinic* project (it has a label on the namespace of `app: petclinic`), and
 * Only on port 3306 (MySQL), and
 * Only to the pod with the `name=petclinicdb` label (MySQL)
 
@@ -87,7 +89,7 @@ You can apply it to the *networkpolicy-database* project by running:
  oc apply -f resources/networkpolicies/allow-petclinic-to-mysql.yaml -n networkpolicy-database
 ```
 
-You will now see both `NetworkPolicy` objects in the *networkdemo-database* project.  If you check the logs for the Pet Clinic pod, you should see that it has now connected to the database!  If not, you might need to kill the pod so that it starts up again and connects to the database.
+You will now see both `NetworkPolicy` objects in the *networkdemo-database* project.  If you check the logs for the Pet Clinic pod, you should see that it has now connected to the database!  If not, you might need to kill the petclinic pod so that it starts up again and connects to the database.
 
 ## Fixing Ingress Through the Router
 
