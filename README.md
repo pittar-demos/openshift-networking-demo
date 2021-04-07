@@ -86,7 +86,7 @@ spec:
 You can apply it to the *networkpolicy-database* project by running:
 
 ```
- oc apply -f resources/networkpolicies/allow-petclinic-to-mysql.yaml -n networkpolicy-database
+ oc apply -f resources/networkpolicies/allow-petclinic-to-mysql.yaml -n networkdemo-database
 ```
 
 You will now see both `NetworkPolicy` objects in the *networkdemo-database* project.  If you check the logs for the Pet Clinic pod, you should see that it has now connected to the database!  If not, you might need to kill the petclinic pod so that it starts up again and connects to the database.
