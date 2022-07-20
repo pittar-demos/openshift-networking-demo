@@ -56,7 +56,7 @@ You can read more about NetworkPolicy in the [OpenShift documentation](https://d
 
 First, let's fix the database connection.
 
-`NetworkPolicy` objects are additive, so there is no reason to remove or edit the existing *deny all* policy.  Instead, we will add another `NetworkPolicy` object that will allow the minimum amount of traffic required.  In this case, the only traffice we want into this project is:
+`NetworkPolicy` objects are additive, so there is no reason to remove or edit the existing *deny all* policy.  Instead, we will add another `NetworkPolicy` object that will allow the minimum amount of traffic required.  In this case, the only traffic we want into this project is:
 * Only allow access from the *networkdemo-petclinic* project (it has a label on the namespace of `app: petclinic`), and
 * Only on port 3306 (MySQL), and
 * Only to the pod with the `name=petclinicdb` label (MySQL)
@@ -135,6 +135,6 @@ If greater security is required, the OpenShift Router offers two other options f
 
 * **Passthrough** - TLS traffic is not decrypted, but instead passed directly to the application where the application is responsible for maintaining proper TLS certificates.  This will use TLS SNI (Server Name Indication) to pass encrypted traffic to the pods/applications.
 
-* **Re-Encrypt** - The OpenShift router will terminate TLS, then use a different certificate to re-encrypt traffice before passing it to the backing pod/application.
+* **Re-Encrypt** - The OpenShift router will terminate TLS, then use a different certificate to re-encrypt traffic before passing it to the backing pod/application.
 
 
