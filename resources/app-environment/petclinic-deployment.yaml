@@ -27,7 +27,10 @@ spec:
         deploymentconfig: petclinic
     spec:
       containers:
-      - env:
+      - name: petclinic
+        image: quay.io/pittar/petclinic:latest
+        imagePullPolicy: Always
+        env:
         - name: spring_profiles_active
           value: mysql
         - name: MYSQL_SERVER
@@ -42,9 +45,6 @@ spec:
             secretKeyRef:
               key: database-password
               name: petclinicdb
-        image: quay.io/pittar/petclinic:latest
-        imagePullPolicy: IfNotPresent
-        name: petclinic
         ports:
         - containerPort: 8080
           protocol: TCP
@@ -52,9 +52,18 @@ spec:
           protocol: TCP
         - containerPort: 8778
           protocol: TCP
+        securityContext:
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop:
+            - ALL
         terminationMessagePath: /dev/termination-log
         terminationMessagePolicy: File
       dnsPolicy: ClusterFirst
       restartPolicy: Always
       schedulerName: default-scheduler
       terminationGracePeriodSeconds: 30
+      securityContext:
+        runAsNonRoot: true
+        seccompProfile:
+          type: RuntimeDefault
